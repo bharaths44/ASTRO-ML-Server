@@ -1,8 +1,28 @@
 import pandas as pd
 import logging
+import numpy as np
 
 
 def graph_data(output, predictions, store_num, item_num, data):
+    # Convert complex data types to JSON serializable formats
+    output = {
+        "date": (
+            [str(date) for date in output["date"]]
+            if isinstance(output["date"], (pd.Series, np.ndarray))
+            else output["date"]
+        ),
+        "store": (
+            output["store"].tolist()
+            if isinstance(output["store"], (pd.Series, np.ndarray))
+            else output["store"]
+        ),
+        "item": (
+            output["item"].tolist()
+            if isinstance(output["item"], (pd.Series, np.ndarray))
+            else output["item"]
+        ),
+    }
+
     fc = forecast(output, predictions)
     res = prepare_data(store_num, item_num, train=data, forecast=fc)
     return res
@@ -25,7 +45,7 @@ def forecast(output, predictions):
 
     forecast = pd.DataFrame(
         {
-            "date": output["date"][:min_length],
+            "date": [str(date) for date in output["date"][:min_length]],
             "store": output["store"][:min_length],
             "item": output["item"][:min_length],
             "sales": predictions[:min_length],
@@ -46,13 +66,13 @@ def prepare_data(store_num, item_num, train, forecast):
 
     # Convert the data to dictionaries
     train_dict = {
-        "date": train_data.date.tolist(),
+        "date": [str(date) for date in train_data.date.tolist()],
         "sales": train_data.sales.tolist(),
         "label": f"Store {store_num} Item {item_num} Sales",
     }
 
     forecast_dict = {
-        "date": forecast_data.date.tolist(),
+        "date": [str(date) for date in forecast_data.date.tolist()],
         "sales": forecast_data.sales.tolist(),
         "label": f"Store {store_num} Item {item_num} Forecast",
     }
