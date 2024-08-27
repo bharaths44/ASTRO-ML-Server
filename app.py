@@ -5,14 +5,14 @@ import pandas as pd
 import numpy as np
 import logging
 import lightgbm as lgb
-from .forecast.forecast import graph_data
-from .preprocessing.create_predict_df import create_predict_df
-from .preprocessing.date_feature import create_date_features as date_feature
-from .preprocessing.lag_feature import lag_features
-from .preprocessing.ewm_feature import ewm_features
-from .preprocessing.roll_mean_feature import roll_mean_features
+from forecast.forecast import graph_data
+from preprocessing.create_predict_df import create_predict_df
+from preprocessing.date_feature import create_date_features as date_feature
+from preprocessing.lag_feature import lag_features
+from preprocessing.ewm_feature import ewm_features
+from preprocessing.roll_mean_feature import roll_mean_features
 
-from .feature_extraction.important_feature import features
+from feature_extraction.important_feature import features
 
 app = Flask(__name__)
 
