@@ -10,7 +10,7 @@ exceptiongroup==1.2.2
 executing==2.0.1
 fastjsonschema==2.20.0
 Flask==3.0.3
-gunicorn --bind 0.0.0.0:8080 app:appgunicorn==23.0.0
+gunicorn==23.0.0
 importlib_metadata==8.4.0
 ipykernel==6.29.5
 ipython==8.18.1
