@@ -1,6 +1,7 @@
 fastapi==0.112.2
-lightgbm==4.5.0
-numpy==2.0.2
+numpy==1.26.4
 pandas==2.2.2
 uvicorn==0.30.6
 python-multipart==0.0.9
+scikit-learn==1.5.1
+prophet==1.1.5
