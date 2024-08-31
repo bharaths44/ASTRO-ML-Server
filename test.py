@@ -2,7 +2,7 @@ import requests
 import json
 
 # URL of the FastAPI endpoint
-url = "http://localhost:8080/predict"
+url = "https://astro-ml-server.onrender.com/predict"
 
 # Path to the sample CSV file
 csv_file_path = "/Users/bharaths/Developer/ASTRO/Demand_forecasting/train.csv"
