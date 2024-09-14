@@ -1,38 +1,37 @@
-name: CI
 on: [workflow_dispatch]
+name: Linux_Container_Workflow
 
 jobs:
     build-and-deploy:
         runs-on: ubuntu-latest
         steps:
+        # checkout the repo
         - name: 'Checkout GitHub Action'
-          uses: actions/checkout@master
-
+          uses: actions/checkout@main
+          
         - name: 'Login via Azure CLI'
-          uses: docker/login-action@v3
-          with:
-              login-server: astroserver.azurecr.io
-              username: ${{ SECRETS.REGISTRY_USERNAME }}
-              password: ${{ SECRETS.REGISTRY_PASSWORD }}
-
-        - run: |
-            docker build . -t astroserver.azurecr.io/astro-ml-server:${{ github.sha }}
-            docker push astroserver.azurecr.io/astro-ml-server:${{ github.sha }}
-
-        - name: 'Azure Login'
           uses: azure/login@v1
           with:
-            creds: ${{ SECRETS.AZURE_CREDENTIALS }}
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+        - name: 'Build and push image'
+          uses: azure/docker-login@v1
+          with:
+            login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+            username: ${{ secrets.REGISTRY_USERNAME }}
+            password: ${{ secrets.REGISTRY_PASSWORD }}
+        - run: |
+            docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}
+            docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}
 
         - name: 'Deploy to Azure Container Instances'
-          uses: azure/aci-deploy@v1
+          uses: 'azure/aci-deploy@v1'
           with:
-            resource-group: astro
-            name: astro-ml-server
-            image: astroserver.azurecr.io/astro-ml-server:${{ github.sha }}
-            ports: 80 8080
-            dns-name-label: astro-ml-server
-            registry-login-server: astroserver.azurecr.io
-            registry-username: ${{ SECRETS.REGISTRY_USERNAME }}
-            registry-password: ${{ SECRETS.REGISTRY_PASSWORD }}
-            location: eastus
+            resource-group: ${{ secrets.RESOURCE_GROUP }}
+            dns-name-label: ${{ secrets.RESOURCE_GROUP }}${{ github.run_number }}
+            image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}
+            registry-login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+            registry-username: ${{ secrets.REGISTRY_USERNAME }}
+            registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+            name: aci-sampleapp
+            location: 'west us'
