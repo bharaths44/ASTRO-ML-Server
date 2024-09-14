@@ -1,0 +1,38 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        steps:
+        - name: 'Checkout GitHub Action'
+          uses: actions/checkout@master
+
+        - name: 'Login via Azure CLI'
+          uses: Azure/docker-login@v1
+          with:
+              login-server: astroserver.azurecr.io
+              username: ${{ SECRETS.REGISTRY_USERNAME }}
+              password: ${{ SECRETS.REGISTRY_PASSWORD }}
+
+        - run: |
+            docker build . -t astroserver.azurecr.io/astro-ml-server:${{ github.sha }}
+            docker push astroserver.azurecr.io/astro-ml-server:${{ github.sha }}
+
+        - name: 'Azure Login'
+          uses: azure/login@v1
+          with:
+            creds: ${{ SECRETS.AZURE_CREDENTIALS }}
+
+        - name: 'Deploy to Azure Container Instances'
+          uses: azure/aci-deploy@v1
+          with:
+            resource-group: astro
+            name: astro-ml-server
+            image: astroserver.azurecr.io/astro-ml-server:${{ github.sha }}
+            ports: 80 8080
+            dns-name-label: astro-ml-server
+            registry-login-server: astroserver.azurecr.io
+            registry-username: ${{ SECRETS.REGISTRY_USERNAME }}
+            registry-password: ${{ SECRETS.REGISTRY_PASSWORD }}
+            location: eastus
