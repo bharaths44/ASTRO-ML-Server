@@ -14,7 +14,6 @@ params = {"store_num": 1, "item_num": 1, "period_type": "M", "num_periods": 3}
 with open(csv_file_path, "rb") as f:
     files = {"file": f}
     response = requests.post(url, files=files, params=params)
-    print(response.json())
 
 # Check if the response is valid JSON
 try:
@@ -24,13 +23,16 @@ except requests.exceptions.JSONDecodeError:
     print("Error: The response is not valid JSON.")
     print("Response content:", response.content, response.text)
 else:
-
     with open(response_file_path, "w") as f:
         json.dump(decoded_json, f, indent=4)
 
     # Print the response
     print("Status Code:", response.status_code)
     print("Response saved to:", response_file_path)
+    
+    # Print the number of entries in the JSON response
+    print("Number of entries in the JSON response:", len(decoded_json))
+
 # Print the response
 print("Status Code:", response.status_code)
 print("Response saved to:", response_file_path)
