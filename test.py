@@ -3,7 +3,8 @@ import json
 
 # URL of the FastAPI endpoint
 # url = "https://astro-ml-server.onrender.com/predict"
-url = "http://localhost:8080/predict"
+# url = "http://127.0.0.1:8000/predict"
+url = "https://astro-ml-server.eastus.azurecontainer.io/predict"
 # Path to the sample CSV file
 csv_file_path = "/Users/bharaths/Developer/ASTRO/Demand_forecasting/train.csv"
 response_file_path = "response.json"
@@ -29,7 +30,7 @@ else:
     # Print the response
     print("Status Code:", response.status_code)
     print("Response saved to:", response_file_path)
-    
+
     # Print the number of entries in the JSON response
     print("Number of entries in the JSON response:", len(decoded_json))
 

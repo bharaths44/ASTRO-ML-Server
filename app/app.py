@@ -17,22 +17,6 @@ from prophet import Prophet
 
 app = FastAPI()
 
-# Configure CORS
-origins = [
-    "http://localhost",
-    "http://localhost:8080",
-    "https://<your-app-name>.azurewebsites.net",
-    # Add more origins as needed
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
