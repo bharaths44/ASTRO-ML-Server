@@ -14,40 +14,40 @@ This documentation outlines the process for building, tagging, and deploying Doc
 
 ### 1. Build Local Docker Image
 
-To build a Docker image specifically for an ARM architecture:
+To build a Docker image :
 
 ```bash
-docker build -t server_image_arm . && docker image prune -f
+docker build -t server_image . && docker image prune -f
 ```
 
 ### 2. Run the Docker Container Locally
 
-To run the previously built `server_image_arm` Docker container locally, use the following command:
+To run the previously built `server_image` Docker container locally, use the following command:
 
 ```bash
-docker rm -f ml_server && docker run --name ml_server -p 8080:8080 server_image_arm
+docker rm -f ml_server && docker run --name ml_server -p 8080:8080 server_image
 ```
 
 This will start the container on port `8080` and remove any existing containers with the same name (`ml_server`).
 
-### 3. Authenticate Google Cloud Docker Registry
+### 3. Authenticate Azure CLI
 
 Ensure you are authenticated with Google Cloud to push images to the Google Container Registry:
 
 ```bash
 az login
 ```
+
 ### 4. Run the ContainerApp command
 
 ```bash
 az containerapp up \
-  --name <Name of App> \     
+  --name <Name of App> \   
   --repo <Github repo>\
   --ingress external
 ```
 
 ---
-
 
 ## API Endpoints
 
