@@ -1,12 +1,12 @@
 # Astro Demand Forecasting Server Using Meta's Prophet
 
-This documentation outlines the process for building, tagging, and deploying Docker images for the Astro-ML project, using Docker and Google Cloud.
+This documentation outlines the process for building, tagging, and deploying Docker images for the Astro-ML project, using Docker and Microsoft Azure.
 
 ## Prerequisites
 
 - Ensure you have Docker installed and properly configured on your system.
-- Google Cloud SDK (`gcloud`) is installed and configured with your project.
-- Make sure you are authenticated and have access to the Google Container Registry.
+- Azure CLI (`az`) is installed and configured with your project.
+- Make sure you are authenticated and have access to the Azure Container Registry.
 
 ---
 
@@ -35,34 +35,19 @@ This will start the container on port `8080` and remove any existing containers 
 Ensure you are authenticated with Google Cloud to push images to the Google Container Registry:
 
 ```bash
-gcloud auth login
-gcloud auth configure-docker asia-south1-docker.pkg.dev
+az login
 ```
-
-### 4. Tag and Push the Docker Image
-
-Once your image is built, you can tag it for pushing to the Google Cloud Registry:
+### 4. Run the ContainerApp command
 
 ```bash
-docker tag server_image $PUSH_REPO
-```
-
-### 5. Build and Push Multi-Platform Docker Image
-
-To build and push a Docker image targeting the `linux/amd64` platform and store it in the Google Container Registry, use the following command:
-
-```bash
-docker buildx build --platform linux/amd64 -t $PUSH_REPO --push .
+az containerapp up \
+  --name <Name of App> \     
+  --repo <Github repo>\
+  --ingress external
 ```
 
 ---
 
-## Notes
-
-- Ensure your `gcloud` account has the necessary permissions to push to the Google Cloud Registry.
-- Adjust the `asia-south1` region to match the region you're using for your Google Cloud project.
-
----
 
 ## API Endpoints
 
@@ -158,3 +143,4 @@ The response will be a JSON array of predictions. Here is an example response:
 - [Prophet](https://facebook.github.io/prophet/docs/)
 - [FastAPI](https://fastapi.tiangolo.com/)
 - [Uvicorn](https://www.uvicorn.org/)
+- [Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/quickstart-repo-to-cloud?tabs=bash%2Ccsharp&pivots=with-dockerfile)
