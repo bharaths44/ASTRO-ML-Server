@@ -5,7 +5,7 @@ on:
   # Automatically trigger it when detected changes in repo
   push:
     branches: 
-      [ workflow-dispatch ]
+      [ workflow-dispatch,main ]
     paths:
     - '**'
     - '.github/workflows/astro-ml-server-AutoDeployTrigger-a8937889-5d55-41b8-8b1c-c0b08a581d6e.yml'
