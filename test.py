@@ -1,5 +1,5 @@
-import requests
-import json
+# import requests
+# import json
 
 # URL of the FastAPI endpoint
 # url = "http://127.0.0.1:8080/predict"
@@ -10,32 +10,32 @@ response_file_path = "response.json"
 # Additional parameters
 params = {"store_num": 1, "item_num": 1, "period_type": "M", "num_periods": 3}
 
-# Send the POST request with the CSV file
-with open(csv_file_path, "rb") as f:
-    files = {"file": f}
-    response = requests.post(url, files=files, params=params)
+# # Send the POST request with the CSV file
+# with open(csv_file_path, "rb") as f:
+#     files = {"file": f}
+#     response = requests.post(url, files=files, params=params)
 
-# Check if the response is valid JSON
-try:
-    response_data = response.json()
-    decoded_json = json.loads(response_data)
-except requests.exceptions.JSONDecodeError:
-    print("Error: The response is not valid JSON.")
-    print("Response content:", response.content, response.text)
-else:
-    with open(response_file_path, "w") as f:
-        json.dump(decoded_json, f, indent=4)
+# # Check if the response is valid JSON
+# try:
+#     response_data = response.json()
+#     decoded_json = json.loads(response_data)
+# except requests.exceptions.JSONDecodeError:
+#     print("Error: The response is not valid JSON.")
+#     print("Response content:", response.content, response.text)
+# else:
+#     with open(response_file_path, "w") as f:
+#         json.dump(decoded_json, f, indent=4)
 
-    # Print the response
-    print("Status Code:", response.status_code)
-    print("Response saved to:", response_file_path)
+#     # Print the response
+#     print("Status Code:", response.status_code)
+#     print("Response saved to:", response_file_path)
 
-    # Print the number of entries in the JSON response
-    print("Number of entries in the JSON response:", len(decoded_json))
+#     # Print the number of entries in the JSON response
+#     print("Number of entries in the JSON response:", len(decoded_json))
 
-# Print the response
-print("Status Code:", response.status_code)
-print("Response saved to:", response_file_path)
+# # Print the response
+# print("Status Code:", response.status_code)
+# print("Response saved to:", response_file_path)
 
 # import json
 # import pandas as pd
@@ -79,4 +79,34 @@ print("Response saved to:", response_file_path)
 # plt.legend()
 
 # # Show the plot
-# plt.show()
+# plt.show()import pandas as pd
+import pandas as pd
+
+# Path to the existing CSV file
+csv_file_path = "/Users/bharaths/Developer/ASTRO/Demand_forecasting/train.csv"
+# Path to the new CSV file for the 30% subset
+subset_csv_file_path = (
+    "/Users/bharaths/Developer/ASTRO/Demand_forecasting/subset_30.csv"
+)
+
+# Read the existing CSV file
+df = pd.read_csv(csv_file_path)
+
+# Ensure the 'date' column is in datetime format
+df["date"] = pd.to_datetime(df["date"])
+
+# Sort the DataFrame by date
+df = df.sort_values(by="date")
+
+# Calculate the split index for 30:70 split
+split_index = int(len(df) * 0.3)
+
+# Select the first 30% of the DataFrame
+df_30 = df.iloc[:split_index]
+
+# Save the 30% subset DataFrame to a new CSV file
+df_30.to_csv(subset_csv_file_path, index=False)
+
+print(
+    f"CSV file with the first 30% of the time series data has been created at {subset_csv_file_path}"
+)
