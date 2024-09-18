@@ -5,7 +5,7 @@ on:
   # Automatically trigger it when detected changes in repo
   push:
     branches: 
-      [ workflow-dispatch ]
+      [ workflow-dispatch,main ]
     paths:
     - '**'
     - '.github/workflows/astro-ml-server-AutoDeployTrigger-a8937889-5d55-41b8-8b1c-c0b08a581d6e.yml'
@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout to the branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Azure Login
         uses: Azure/login@v2.1.1
@@ -30,7 +30,6 @@ jobs:
         uses: azure/container-apps-deploy-action@v2
         with:
           appSourcePath: ${{ github.workspace }}
-          _dockerfilePathKey_: _dockerfilePath_
           registryUrl: ca091837a4aeacr.azurecr.io
           registryUsername: ${{ secrets.ASTROMLSERVER_REGISTRY_USERNAME }}
           registryPassword: ${{ secrets.ASTROMLSERVER_REGISTRY_PASSWORD }}
