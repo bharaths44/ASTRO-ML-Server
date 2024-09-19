@@ -1,3 +1,6 @@
 .DS_Store
 dotenv.env
 response.json
+.venv
+.vscode
+app/__pycache__
