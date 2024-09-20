@@ -1,16 +1,16 @@
-# app/services/prediction/prediction_plot.py
-
 import logging
 import tempfile
-import pandas as pd
-import plotly.io as pio
-from prophet import Prophet
 from typing import Optional
-from .utils import process_file
+
+import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
+import plotly.io as pio
+from fastapi import File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
-from fastapi import HTTPException, UploadFile, File, Form
+from plotly.subplots import make_subplots
+from prophet import Prophet
+
+from .utils import process_file
 
 
 async def predict_plot(
@@ -21,7 +21,9 @@ async def predict_plot(
     num_periods: int = Form(...),
 ):
     try:
-        df_data, period = await process_file(file, store_num, item_num, period_type, num_periods)
+        df_data, period = await process_file(
+            file, store_num, item_num, period_type, num_periods
+        )
 
         model_prophet = Prophet()
         model_prophet.fit(df_data, seed=4)
@@ -34,31 +36,56 @@ async def predict_plot(
         forecast_prophet.round()
 
         # Calculate the rolling average for the actual sales data
-        df_data["sales_trend"] = df_data["y"].rolling(
-            window=30, min_periods=1).mean()
+        df_data["sales_trend"] = df_data["y"].rolling(window=30, min_periods=1).mean()
 
-        forecast_prophet["yhat_trend"] = forecast_prophet["yhat"].rolling(
-            window=30, min_periods=1
-        ).mean()
+        forecast_prophet["yhat_trend"] = (
+            forecast_prophet["yhat"].rolling(window=30, min_periods=1).mean()
+        )
 
-        forecast_prophet["yhat_upper_trend"] = forecast_prophet["yhat_upper"].rolling(
-            window=30, min_periods=1
-        ).mean()
+        forecast_prophet["yhat_upper_trend"] = (
+            forecast_prophet["yhat_upper"].rolling(window=30, min_periods=1).mean()
+        )
 
-        forecast_prophet["yhat_lower_trend"] = forecast_prophet["yhat_lower"].rolling(
-            window=30, min_periods=1
-        ).mean()
+        forecast_prophet["yhat_lower_trend"] = (
+            forecast_prophet["yhat_lower"].rolling(window=30, min_periods=1).mean()
+        )
 
         # Create the plot
         fig = make_subplots(rows=1, cols=1)
-        fig.add_trace(go.Scatter(
-            x=df_data["ds"], y=df_data["sales_trend"], name="Actual Sales"))
-        fig.add_trace(go.Scatter(
-            x=forecast_prophet["ds"], y=forecast_prophet["yhat_trend"], name="Forecast"))
-        fig.add_trace(go.Scatter(
-            x=forecast_prophet["ds"], y=forecast_prophet["yhat_upper_trend"], name="Upper Bound", fill='tonexty'))
-        fig.add_trace(go.Scatter(
-            x=forecast_prophet["ds"], y=forecast_prophet["yhat_lower_trend"], name="Lower Bound", fill='tonexty'))
+        fig.add_trace(
+            go.Scatter(
+                x=df_data["ds"],
+                y=df_data["sales_trend"],
+                name="Actual Sales",
+                showlegend=False,
+            )
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=forecast_prophet["ds"],
+                y=forecast_prophet["yhat_trend"],
+                name="Forecast",
+                showlegend=False,
+            )
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=forecast_prophet["ds"],
+                y=forecast_prophet["yhat_upper_trend"],
+                name="Upper Bound",
+                fill="tonexty",
+                showlegend=False,
+            )
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=forecast_prophet["ds"],
+                y=forecast_prophet["yhat_lower_trend"],
+                name="Lower Bound",
+                fill="tonexty",
+                showlegend=False,
+            )
+        )
 
         # Save the plot to a temporary file
         with tempfile.NamedTemporaryFile(delete=False, suffix=".svg") as tmpfile:

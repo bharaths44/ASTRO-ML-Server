@@ -1,9 +1,12 @@
 from typing import Optional
-from fastapi import APIRouter, UploadFile, File, Form
+
+from fastapi import APIRouter, File, Form, UploadFile
+
 from app.services.prediction.prediction_data import predict_data
 from app.services.prediction.prediction_plot import predict_plot
 
 router = APIRouter()
+
 
 @router.post("/predict/data")
 async def predict_data_route(
@@ -27,6 +30,7 @@ async def predict_data_route(
         JSONResponse: The predicted data in JSON format.
     """
     return await predict_data(file, store_num, item_num, period_type, num_periods)
+
 
 @router.post("/predict/plot")
 async def predict_plot_route(

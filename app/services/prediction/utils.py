@@ -1,13 +1,18 @@
-# app/services/prediction/utils.py
-
 import io
 import logging
-import pandas as pd
 from typing import Optional
+
+import pandas as pd
 from fastapi import HTTPException, UploadFile
 
 
-async def process_file(file: UploadFile, store_num: Optional[int], item_num: Optional[int], period_type: str, num_periods: int):
+async def process_file(
+    file: UploadFile,
+    store_num: Optional[int],
+    item_num: Optional[int],
+    period_type: str,
+    num_periods: int,
+):
     logging.info(
         "Received request with period_type: %s, num_periods: %d",
         period_type,

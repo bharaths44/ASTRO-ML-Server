@@ -1,7 +1,9 @@
-
 import logging
+
 from fastapi import FastAPI
+
 from app.routes import main_routes, predict_routes
+
 app = FastAPI()
 
 logging.basicConfig(
