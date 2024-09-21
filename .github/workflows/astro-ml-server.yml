@@ -85,28 +85,8 @@ jobs:
       - name: Deploy to Cloud Run
         id: deploy
         run: |-
-          gcloud run deploy ${{ env.SERVICE_NAME }} \
+          gcloud run deploy $SERVICE_NAME \
             --region ${env.REGION} \
-            --image ${ env.REGION }-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY }}/astro-ml-server:latest \
+            --image $REGION-docker.pkg.dev/$PROJECT_ID/$ARTIFACT_REGISTRY/astro-ml-server:latest \
             --platform managed \
             --allow-unauthenticated
-
-  delete-artifact-registry:
-    runs-on: ubuntu-latest
-    needs: deploy-to-cloud-run
-    steps:
-      - id: auth
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: '${{ secrets.GCP_SA_KEY }}'
-
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ env.PROJECT_ID }}
-
-      - name: Delete Artifact Registry
-        run: |-
-          gcloud artifacts repositories delete ${{ env.ARTIFACT_REGISTRY }} \
-            --location=${{ env.REGION }} \
-            --quiet
