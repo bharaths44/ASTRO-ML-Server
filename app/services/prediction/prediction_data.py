@@ -13,30 +13,47 @@ async def predict_data(
     file: UploadFile = File(...),
     store_num: Optional[int] = Form(None),
     item_num: Optional[int] = Form(None),
-    period_type: str = Form(...),
-    num_periods: int = Form(...),
 ):
     try:
-        df_data, period = await process_file(
-            file, store_num, item_num, period_type, num_periods
-        )
+        # Process the file to get the data
+        df_data = await process_file(file, store_num, item_num)
 
         # Ensure 'ds' column is datetime
         df_data["ds"] = pd.to_datetime(df_data["ds"], errors="coerce")
         if df_data["ds"].isnull().any():
             raise ValueError("Invalid date format in 'ds' column")
 
+        # Determine period_type and num_periods
+        data_length = len(df_data)
+        date_diff = (df_data["ds"].max() - df_data["ds"].min()).days
+
+        if date_diff > 365:
+            num_periods = min(int(data_length * (60 / 365)), data_length)
+        elif date_diff > 30:
+            num_periods = min(30, data_length)
+        else:
+            num_periods = data_length
+
+        # Log the determined period_type and num_periods
+        logging.info("Determined num_periods: %d", num_periods)
+
+        # Fit the Prophet model
         model_prophet = Prophet()
         model_prophet.fit(df_data, seed=4)
 
+        # Create future dataframe
         df_future = model_prophet.make_future_dataframe(
-            periods=period, freq="D", include_history=False
+            periods=num_periods, freq="D", include_history=False
         )
 
+        # Ensure future dataframe is created
+        if df_future.empty:
+            raise ValueError("Future dataframe is empty")
+
+        # Predict future values
         forecast_prophet = model_prophet.predict(df_future)
         forecast_prophet.round()
 
-        # Calculate the rolling average for the actual sales data
         df_data["sales_trend"] = df_data["y"].rolling(window=30, min_periods=1).mean()
 
         forecast_prophet["yhat_trend"] = (
