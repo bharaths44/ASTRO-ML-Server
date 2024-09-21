@@ -10,24 +10,9 @@ async def process_file(
     file: UploadFile,
     store_num: Optional[int],
     item_num: Optional[int],
-    period_type: str,
-    num_periods: int,
 ):
-    logging.info(
-        "Received request with period_type: %s, num_periods: %d",
-        period_type,
-        num_periods,
-    )
-
     logging.info("Store number: %s", store_num)
     logging.info("Item number: %s", item_num)
-    logging.info("Period type: %s", period_type)
-    logging.info("Number of periods: %d", num_periods)
-
-    if period_type == "M":
-        period = num_periods * 31
-    else:
-        period = num_periods
 
     contents = await file.read()
     logging.info("File content length: %d", len(contents))
@@ -63,4 +48,4 @@ async def process_file(
     df_data = df_data.rename(columns={"date": "ds", "sales": "y"})
     df_data = df_data[["ds", "y"]]
 
-    return df_data, period
+    return df_data
