@@ -1,4 +1,4 @@
-name: publish
+name: Publish to Github Container registery
 on:
   push:
   workflow_dispatch:
@@ -15,7 +15,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build the Docker image
-        run: |
-          docker build . --tag ghcr.io/bharaths44/astro-server:latest
-          docker push ghcr.io/bharaths44/astro-server:latest
+      - name: Build and push image
+        uses: docker/build-push-action@v6.7.0
+        with:
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
