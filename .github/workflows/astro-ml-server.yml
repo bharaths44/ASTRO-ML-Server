@@ -8,7 +8,7 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   SERVICE_NAME: astro-backend
-  REGION: asia-south1
+  REGION: asia-east1
   ARTIFACT_REGISTRY: astro-artifact-registry
 
 jobs:
@@ -86,7 +86,7 @@ jobs:
         id: deploy
         run: |-
           gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --region ${{ env.REGION }} \
+            --region ${env.REGION} \
             --image ${ env.REGION }-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY }}/astro-ml-server:latest \
             --platform managed \
             --allow-unauthenticated
