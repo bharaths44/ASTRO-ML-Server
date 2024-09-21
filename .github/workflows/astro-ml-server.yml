@@ -1,7 +1,11 @@
-name: Publish to Github Container registery
+name: Publish to Github Container Registry
+
 on:
   push:
+    branches:
+      - main
   workflow_dispatch:
+
 jobs:
   publish-hello-docker-image:
     runs-on: ubuntu-latest
@@ -20,4 +24,4 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/bharaths44/astro-ml-server:latest
