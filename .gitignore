@@ -4,3 +4,4 @@ response.json
 .venv
 .vscode
 app/__pycache__
+lightning_logs
